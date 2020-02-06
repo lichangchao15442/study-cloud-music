@@ -1,0 +1,6 @@
+export const CHANGE_ENTER_LOADING = "album/CHANGE_ENTER_LOADING"
+export const CHANGE_CURRENT_ALBUM = "album/CHANGE_CURRENT_ALBUM"
+
+
+
+
