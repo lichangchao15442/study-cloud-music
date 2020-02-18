@@ -9,7 +9,7 @@ import { EnterLoading } from "../Singers/style";
 import { renderRoutes } from "react-router-config"
 
 function Rank(props) {
-  const { rankList: list, loading } = props;
+  const { rankList: list, loading, songsCount } = props;
   const { getRankListDataDispatch } = props;
 
   let rankList = list ? list.toJS() : [];
@@ -62,7 +62,7 @@ function Rank(props) {
   let globalList = rankList.slice(globalStartIndex);
   let displayStyle = loading ? { display: "none" } : { display: "" };
   return (
-    <Container play={1}>
+    <Container play={songsCount}>
       <Scroll>
         <div>
           <h1 className="official" style={displayStyle}>
@@ -88,7 +88,8 @@ function Rank(props) {
 // 映射Redux全局的state到组件的props上
 const mapStateToProps = state => ({
   rankList: state.getIn(["rank", "rankList"]),
-  loading: state.getIn(["rank", "loading"])
+  loading: state.getIn(["rank", "loading"]),
+  songsCount: state.getIn(['player', 'playList']).size
 });
 
 // 映射dispatch到props上

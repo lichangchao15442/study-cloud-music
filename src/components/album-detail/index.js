@@ -64,6 +64,7 @@ function AlbumDetail(props) {
         showCollect={true}
         collectCount={currentAlbum.subscribedCount}
         showBackground={true}
+        musicAnimation={props.musicAnimation}
       ></SongList>
     );
   };

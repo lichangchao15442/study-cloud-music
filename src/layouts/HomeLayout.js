@@ -1,10 +1,11 @@
 import React from "react";
-import {renderRoutes} from "react-router-config";
+import { renderRoutes } from "react-router-config";
 import { Top, Tab, TabItem } from "./HomeLayout.style";
 import { NavLink } from "react-router-dom";
+import Player from "../application/Player/index"
 
 function Home(props) {
-  const {route} = props
+  const { route } = props;
 
   return (
     <div>
@@ -16,7 +17,12 @@ function Home(props) {
           &#xe65c;
         </span>
         <span>云音乐</span>
-        <span className="iconfont search">&#xe62b;</span>
+        <span
+          className="iconfont search"
+          onClick={() => props.history.push("/search")}
+        >
+          &#xe62b;
+        </span>
       </Top>
       <Tab>
         <NavLink to="/recommend" activeClassName="selected">
@@ -36,6 +42,7 @@ function Home(props) {
         </NavLink>
       </Tab>
       {renderRoutes(route.routes)}
+      <Player></Player>
     </div>
   );
 }

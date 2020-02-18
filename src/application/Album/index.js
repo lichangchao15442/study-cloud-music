@@ -11,16 +11,19 @@ import { HEADER_HEIGHT } from "../../api/config";
 import Scroll from "../../baseUI/scroll/index";
 import style from "../../assets/global-style";
 import { CSSTransition } from "react-transition-group";
+import MusicNote from "../../baseUI/music-note/index";
 
 function Album(props) {
   const [showStatus, setShowStatus] = useState(true);
   const [title, setTitle] = useState("歌单");
   const [isMarquee, setIsMarquee] = useState(false);
+
+  const musicNoteRef = useRef();
   const headerEl = useRef();
 
   const id = props.match.params.id;
 
-  const { currentAlbum, enterLoading } = props;
+  const { currentAlbum, enterLoading, songsCount } = props;
   const { getAlbumDataDispatch } = props;
 
   let currentAlbumJS = currentAlbum.toJS();
@@ -52,6 +55,10 @@ function Album(props) {
   const handleBack = useCallback(() => {
     setShowStatus(false);
   }, []);
+
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation({ x, y });
+  };
   return (
     <CSSTransition
       in={showStatus}
@@ -61,7 +68,7 @@ function Album(props) {
       onExited={props.history.goBack}
       appear={true}
     >
-      <Container play={0}>
+      <Container play={songsCount}>
         <Header
           ref={headerEl}
           title={title}
@@ -70,7 +77,10 @@ function Album(props) {
         ></Header>
         {!isEmptyObject(currentAlbumJS) ? (
           <Scroll bounceTop={false} onScroll={handleScroll}>
-            <AlbumDetail currentAlbum={currentAlbumJS}></AlbumDetail>
+            <AlbumDetail
+              currentAlbum={currentAlbumJS}
+              musicAnimation={musicAnimation}
+            ></AlbumDetail>
           </Scroll>
         ) : null}
         {enterLoading ? (
@@ -78,6 +88,7 @@ function Album(props) {
             <Loading></Loading>
           </EnterLoading>
         ) : null}
+        <MusicNote ref={musicNoteRef}></MusicNote>
       </Container>
     </CSSTransition>
   );
@@ -86,7 +97,8 @@ function Album(props) {
 // 映射Redux全局的state到组件的props上
 const mapStateToProps = state => ({
   currentAlbum: state.getIn(["album", "currentAlbum"]),
-  enterLoading: state.getIn(["album", "enterLoading"])
+  enterLoading: state.getIn(["album", "enterLoading"]),
+  songsCount: state.getIn(['player', 'playList']).size
 });
 
 // 映射dispatch到props上

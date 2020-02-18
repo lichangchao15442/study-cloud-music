@@ -11,8 +11,9 @@ import { connect } from "react-redux";
 import * as actionTypes from "./store/actionCreator";
 
 function Recommend(props) {
-  const { bannerList, recommendList, enterLoading } = props;
+  const { bannerList, recommendList, enterLoading, songsCount } = props;
   const { getBannerDataDispatch, getRecommendListDataDispatch } = props;
+
   useEffect(() => {
     if (!bannerList.size) {
       getBannerDataDispatch();
@@ -24,7 +25,7 @@ function Recommend(props) {
   const bannerListJS = bannerList ? bannerList.toJS() : [];
   const recommendListJS = recommendList ? recommendList.toJS() : [];
   return (
-    <Content play={60}>
+    <Content play={songsCount}>
       <Scroll className="list" onScroll={forceCheck}>
         <div>
           <Slider bannerList={bannerListJS}></Slider>
@@ -47,7 +48,8 @@ function Recommend(props) {
 const mapStateToProps = state => ({
   bannerList: state.getIn(["recommend", "bannerList"]),
   recommendList: state.getIn(["recommend", "recommendList"]),
-  enterLoading: state.getIn(["recommend", "enterLoading"])
+  enterLoading: state.getIn(["recommend", "enterLoading"]),
+  songsCount: state.getIn(['player', "playList"]).size
 });
 
 // mapDispatchToProps：用来建立UI组件的参数到store.dispatch方法的映射。

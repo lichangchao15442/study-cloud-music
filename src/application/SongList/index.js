@@ -1,10 +1,23 @@
 import React from "react";
-import { SongList,SongItem } from "./style";
+import { SongList, SongItem } from "./style";
 import { getName } from "../../api/utils";
+import { connect } from "react-redux";
+import {
+  changePlayList,
+  changeSequencePlayList,
+  changeCurrentIndex
+} from "./../Player/store/actionCreators";
 
 const SongsList = React.forwardRef((props, ref) => {
   const { songs, showCollect, collectCount } = props;
   const totalCount = songs.length;
+
+  const { musicAnimation } = props;
+  const {
+    changePlayListDispatch,
+    changeSequencePlayListDispatch,
+    changeCurrentIndexDispatch
+  } = props;
 
   const collect = count => {
     return (
@@ -15,6 +28,13 @@ const SongsList = React.forwardRef((props, ref) => {
     );
   };
 
+  const selectItem = (e, index) => {
+    changePlayListDispatch(songs);
+    changeSequencePlayListDispatch(songs);
+    changeCurrentIndexDispatch(index);
+    musicAnimation(e.nativeEvent.clientX, e.nativeEvent.clientY);
+  };
+
   let songList = list => {
     let res = [];
     // 判断页数是否超过总数
@@ -23,7 +43,7 @@ const SongsList = React.forwardRef((props, ref) => {
       if (i >= list.length) break;
       let item = list[i];
       res.push(
-        <li key={item.id}>
+        <li key={item.id} onClick={e => selectItem(e, i)}>
           <span className="index">{i + 1}</span>
           <div className="info">
             <span>{item.name}</span>
@@ -40,7 +60,7 @@ const SongsList = React.forwardRef((props, ref) => {
   return (
     <SongList showBackground={props.showBackground}>
       <div className="first_line">
-        <div className="play_all">
+        <div className="play_all" onClick={(e) => selectItem(e, 0)}>
           <i className="iconfont">&#xe6e3;</i>
           <span>
             播放全部
@@ -54,4 +74,27 @@ const SongsList = React.forwardRef((props, ref) => {
   );
 });
 
-export default React.memo(SongsList);
+//映射Redux全局的state到组件props上
+const mapStateToProps = state => ({
+  playList: state.getIn(["player", "playList"])
+});
+
+//映射dispatch到props上
+const mapDispatchToProps = dispatch => {
+  return {
+    changePlayListDispatch(data) {
+      dispatch(changePlayList(data));
+    },
+    changeSequencePlayListDispatch(data) {
+      dispatch(changeSequencePlayList(data));
+    },
+    changeCurrentIndexDispatch(data) {
+      dispatch(changeCurrentIndex(data));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(SongsList));

@@ -16,6 +16,7 @@ const SingersComponent = lazy(() => import("../application/Singers/"));
 const AlbumComponent = lazy(() => import("../application/Album/"));
 const RankComponent = lazy(() => import("../application/Rank/"));
 const SingerComponent = lazy(() => import("../application/Singer/"));
+const SearchComponent = lazy(() => import("../application/Search/"));
 
 export default [
   {
@@ -43,10 +44,10 @@ export default [
           {
             path: "/singers",
             component: SuspenseComponent(SingersComponent),
-            key:"singers",
-            routes:[
+            key: "singers",
+            routes: [
               {
-                path:"/singers/:id",
+                path: "/singers/:id",
                 component: SuspenseComponent(SingerComponent)
               }
             ]
@@ -54,14 +55,20 @@ export default [
           {
             path: "/rank",
             component: SuspenseComponent(RankComponent),
-            key:"rank",
-            routes:[
+            key: "rank",
+            routes: [
               {
-                path:"/rank/:id",
+                path: "/rank/:id",
                 component: SuspenseComponent(AlbumComponent)
               }
             ]
           },
+          {
+            path: "/search",
+            exact: true,
+            key: "search",
+            component: SuspenseComponent(SearchComponent)
+          }
         ]
       }
     ]

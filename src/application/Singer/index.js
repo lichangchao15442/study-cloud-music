@@ -15,13 +15,14 @@ import Scroll from "./../../baseUI/scroll/index";
 import { changeEnterLoading, getSingerInfo } from "./store/actionCreators";
 import SongList from "../SongList/";
 import { HEADER_HEIGHT } from "./../../api/config";
+import MusicNote from "../../baseUI/music-note/index"
 
 function Singer(props) {
   const initialHeight = useRef(0);
   const [showStatus, setShowStatus] = useState(true);
   const OFFSET = 5;
 
-  const { artist: immutableArtist, songs: immutableSongs, loading } = props;
+  const { artist: immutableArtist, songs: immutableSongs, loading, songsCount } = props;
   const { getSingerDataDispatch } = props;
 
   const artist = immutableArtist.toJS();
@@ -33,6 +34,7 @@ function Singer(props) {
   const layer = useRef();
   const songScrollWrapper = useRef();
   const songScroll = useRef();
+  const musicNoteRef = useRef()
 
   useEffect(() => {
     const id = props.match.params.id;
@@ -81,9 +83,13 @@ function Singer(props) {
       // 此时图片高度与Header一致
       imageDOM.style.height = `${HEADER_HEIGHT}px`;
       imageDOM.style.paddingTop = 0;
-      imageDOM.style.zIndex = 100;
+      imageDOM.style.zIndex = 99;
     }
   };
+
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation({ x, y })
+  }
 
   const setShowStatusFalse = useCallback(() => {
     setShowStatus(false);
@@ -111,12 +117,13 @@ function Singer(props) {
           <span className="text">收藏</span>
         </CollectButton>
         <BgLayer ref={layer}></BgLayer>
-        <SongListWrapper ref={songScrollWrapper} play={1}>
+        <SongListWrapper ref={songScrollWrapper} play={songsCount}>
           <Scroll onScroll={handleScroll} ref={songScroll}>
             <SongList
               songs={songs}
               showCollect={false}
               usePageSplit={false}
+              musicAnimation={musicAnimation}
             ></SongList>
           </Scroll>
         </SongListWrapper>
@@ -125,6 +132,7 @@ function Singer(props) {
             <Loading></Loading>
           </EnterLoading>
         ) : null}
+        <MusicNote ref={musicNoteRef}></MusicNote>
       </Container>
     </CSSTransition>
   );
@@ -134,7 +142,8 @@ function Singer(props) {
 const mapStateToProps = state => ({
   artist: state.getIn(["singerInfo", "artist"]),
   songs: state.getIn(["singerInfo", "songsOfArtist"]),
-  loading: state.getIn(["singerInfo", "loading"])
+  loading: state.getIn(["singerInfo", "loading"]),
+  songsCount: state.getIn(['player', 'playList']).size
 });
 
 // 映射dispatch到props上
